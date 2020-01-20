@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Category;
+use App\Product;
 use Illuminate\Http\Request;
 
 class ProductsController extends Controller
@@ -13,7 +15,8 @@ class ProductsController extends Controller
      */
     public function index()
     {
-        return view('admin.product.create');
+        $products = Product::all();
+        return view('admin.product.index', compact('products'));
     }
 
     /**
@@ -23,7 +26,8 @@ class ProductsController extends Controller
      */
     public function create()
     {
-        //
+        $categories = Category::pluck('name', 'id');
+        return view('admin.product.create', compact('categories'));
     }
 
     /**
@@ -34,7 +38,26 @@ class ProductsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $formInput = $request->except('image');
+
+        //validation
+        $this->validate($request,[
+            'name'=> 'required|max:255',
+            'size'=> 'required|max:500',
+            'price'=> 'required|max:191',
+            'image'=> 'image|mimes:png,jpg,jpeg|max:2000',
+        ]);
+
+        //image upload
+        $image = $request->image;
+        if ($image) {
+            $imageName = $image->getClientOriginalName();
+            $image->move('images', $imageName);
+            $formInput['image'] = $imageName;
+          }
+          Product::create($formInput);
+          
+          return redirect()->route('admin.index');
     }
 
     /**

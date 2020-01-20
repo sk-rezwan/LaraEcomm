@@ -9,6 +9,7 @@
             <div class="img-wrapper">
                 <a href="#">
                      <img src="http://i.imgur.com/Mcw06Yt.png"/>
+                     {{-- <img src="{{url('images', $shirt->image)}}"/> --}}
                 </a>
             </div>
         </div>
